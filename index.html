@@ -1,0 +1,3607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>美睛美科 - 眼部检测系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #FF5722;
+            --background-color: #F5F5F5;
+            --card-color: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border-radius: 8px;
+            --spacing: 16px;
+            --nav-height: 56px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            max-width: 1920px;
+            margin: 0 auto;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--spacing);
+            height: 64px;
+            background-color: var(--card-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .top-bar-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .icon-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--secondary-color);
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing);
+            padding-bottom: calc(var(--nav-height) + var(--spacing));
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background-color: var(--card-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item-icon {
+            font-size: 24px;
+        }
+
+        .nav-item-label {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: var(--spacing);
+            margin-bottom: var(--spacing);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 200px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: var(--spacing);
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing);
+            margin-bottom: var(--spacing);
+        }
+
+        .service-item {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .service-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .service-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .service-price {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing);
+        }
+
+        .case-item {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .case-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .case-content {
+            padding: var(--spacing);
+        }
+
+        .case-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .case-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button:hover {
+            background-color: #1976D2;
+        }
+
+        .button.secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .button.secondary:hover {
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .button.danger {
+            background: linear-gradient(to right, #FF5722, #F44336);
+        }
+
+        .button.danger:hover {
+            background: linear-gradient(to right, #F44336, #E53935);
+        }
+
+        /* 服务页面样式 */
+        .service-category {
+            margin-bottom: 24px;
+        }
+
+        /* 检测页面样式 */
+        .detection-intro {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .detection-image {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 24px;
+            display: block;
+        }
+
+        .detection-steps {
+            margin-bottom: 24px;
+        }
+
+        .detection-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .recent-customers {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .customer-item {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .detection-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        /* 客户页面样式 */
+        .customer-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter-item {
+            background-color: var(--card-color);
+            border-radius: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .filter-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .customer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing);
+        }
+
+        .customer-card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .customer-info {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .customer-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        /* 我的页面样式 */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 16px;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-weight: 500;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .profile-role {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing);
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing);
+        }
+
+        .function-item {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .function-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: rgba(33, 150, 243, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .function-name {
+            font-weight: 500;
+        }
+
+        /* 检测流程页面样式 */
+        .detection-flow {
+            display: none;
+        }
+
+        .detection-flow.active {
+            display: block;
+        }
+
+        .flow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .flow-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .flow-progress {
+            color: var(--text-secondary);
+        }
+
+        .question-card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #E0E0E0;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(33, 150, 243, 0.1);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            border: 2px solid #E0E0E0;
+            margin-right: 12px;
+            position: relative;
+        }
+
+        .option-item.selected .option-radio {
+            border-color: var(--primary-color);
+        }
+
+        .option-item.selected .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-label {
+            flex: 1;
+        }
+
+        .question-hint {
+            margin-top: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .flow-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #000;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 100px;
+            border: 2px dashed white;
+            border-radius: 8px;
+        }
+
+        .camera-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .camera-button {
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            background-color: white;
+            border: 3px solid var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-button-inner {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: var(--primary-color);
+        }
+
+        .camera-instruction {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            text-align: center;
+        }
+
+        /* 结果展示页面样式 */
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .result-level {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .radar-chart {
+            width: 100%;
+            height: 300px;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .radar-chart-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .dimension-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dimension-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .dimension-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        .dimension-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .dimension-score {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .dimension-arrow {
+            margin-left: 8px;
+            color: var(--text-secondary);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        /* 维度详情页面样式 */
+        .dimension-detail-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .dimension-detail-score {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .dimension-detail-level {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing);
+            margin-bottom: 24px;
+        }
+
+        .eye-image-container {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eye-image {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+        }
+
+        .analysis-container {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-title {
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .analysis-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .analysis-label {
+            width: 120px;
+            color: var(--text-secondary);
+        }
+
+        .analysis-value {
+            flex: 1;
+        }
+
+        .suggestions-container {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .suggestions-title {
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .suggestion-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .suggestion-text {
+            flex: 1;
+        }
+
+        /* 页面切换动画 */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .service-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .function-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .service-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .customer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 角色切换对话框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .role-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid #E0E0E0;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .role-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .role-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(33, 150, 243, 0.1);
+        }
+
+        .role-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: rgba(33, 150, 243, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .role-info {
+            flex: 1;
+        }
+
+        .role-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .role-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* 检测报告页面样式 */
+        .report-header {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            margin-bottom: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-customer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .report-customer-item {
+            margin-bottom: 8px;
+        }
+
+        .report-customer-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .report-customer-value {
+            font-weight: 500;
+        }
+
+        .report-section {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing);
+            margin-bottom: var(--spacing);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-section-title {
+            font-weight: 500;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .problem-item {
+            margin-bottom: 12px;
+        }
+
+        .problem-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .problem-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-button {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E0E0E0;
+            border-radius: 50%;
+            margin-right: 8px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .radio-item.selected .radio-button {
+            border-color: var(--primary-color);
+        }
+
+        .radio-item.selected .radio-button::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radio-label {
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E0E0E0;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item.selected .checkbox {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+        }
+
+        .checkbox-item.selected .checkbox::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+        }
+
+        /* 报告页面样式 */
+        .report-date {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .questionnaire-results {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .question-result {
+            padding: 12px;
+            background-color: #F5F5F5;
+            border-radius: var(--border-radius);
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .answer-text {
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        .analysis-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .image-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .analysis-item {
+            background-color: #F5F5F5;
+            border-radius: var(--border-radius);
+            padding: 16px;
+        }
+
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .analysis-images {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .image-compare {
+            flex: 1;
+            text-align: center;
+        }
+
+        .image-compare img {
+            width: 100%;
+            border-radius: var(--border-radius);
+            margin-bottom: 4px;
+        }
+
+        .image-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .analysis-result {
+            background-color: white;
+            padding: 12px;
+            border-radius: var(--border-radius);
+        }
+
+        .result-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .dimension-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .dimension-score-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dimension-name {
+            width: 80px;
+        }
+
+        .score-bar {
+            flex: 1;
+            height: 8px;
+            background-color: #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .score-value {
+            width: 40px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* 推荐方案页面样式 */
+        .problem-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommendation-item {
+            background-color: #F5F5F5;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .recommendation-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recommendation-info {
+            flex: 1;
+        }
+
+        .recommendation-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .recommendation-price {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .recommendation-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .detail-item .material-icons {
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+
+        .advice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .advice-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background-color: #F5F5F5;
+            border-radius: var(--border-radius);
+        }
+
+        .advice-item .material-icons {
+            color: var(--primary-color);
+        }
+
+        .advice-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .advice-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 禁用状态和tooltip样式 */
+        .function-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .function-item.disabled::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .function-item.disabled:hover::before {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .function-item.disabled .function-icon {
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .function-item.disabled .function-icon span {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <div class="top-bar-title">美睛美科</div>
+            <div class="top-bar-actions">
+                <button class="icon-button">
+                    <span class="material-icons">notifications</span>
+                </button>
+                <button class="icon-button">
+                    <span class="material-icons">settings</span>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- 首页 -->
+            <div class="page active" id="home-page">
+                <div class="carousel">
+                    <img src="https://via.placeholder.com/1920x500/2196F3/FFFFFF?text=美睛美科门店活动" alt="门店活动"
+                        class="carousel-image">
+                </div>
+
+                <div class="section-title">热门服务</div>
+                <div class="service-grid">
+                    <div class="service-item" onclick="navigateTo('detection-page')">
+                        <div class="service-icon">
+                            <span class="material-icons">visibility</span>
+                        </div>
+                        <div class="service-name">眼部AI检测</div>
+                        <div class="service-price">¥98</div>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('service-detail')">
+                        <div class="service-icon">
+                            <span class="material-icons">spa</span>
+                        </div>
+                        <div class="service-name">舒缓干眼服务</div>
+                        <div class="service-price">¥298起</div>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('service-detail')">
+                        <div class="service-icon">
+                            <span class="material-icons">face</span>
+                        </div>
+                        <div class="service-name">消除眼袋服务</div>
+                        <div class="service-price">¥398起</div>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('service-detail')">
+                        <div class="service-icon">
+                            <span class="material-icons">wb_sunny</span>
+                        </div>
+                        <div class="service-name">眼周提亮服务</div>
+                        <div class="service-price">¥198起</div>
+                    </div>
+                </div>
+
+                <div class="section-title">服务案例</div>
+                <div class="case-grid">
+                    <div class="case-item">
+                        <img src="https://via.placeholder.com/600x400/2196F3/FFFFFF?text=服务案例1" alt="服务案例1"
+                            class="case-image">
+                        <div class="case-content">
+                            <div class="case-title">干眼症改善案例</div>
+                            <div class="case-description">35岁女性，长期使用电子设备，眼睛干涩疲劳，经过舒缓干眼服务后，症状明显改善...</div>
+                        </div>
+                    </div>
+                    <div class="case-item">
+                        <img src="https://via.placeholder.com/600x400/FF5722/FFFFFF?text=服务案例2" alt="服务案例2"
+                            class="case-image">
+                        <div class="case-content">
+                            <div class="case-title">眼袋消除案例</div>
+                            <div class="case-description">42岁男性，眼袋明显，经过眼袋消除服务后，眼部轮廓明显提升，整体状态年轻化...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务页面 -->
+            <div class="page" id="services-page">
+                <div class="service-category">
+                    <div class="section-title">眼部护理</div>
+                    <div class="service-grid">
+                        <div class="service-item" onclick="navigateTo('service-detail')">
+                            <div class="service-icon">
+                                <span class="material-icons">spa</span>
+                            </div>
+                            <div class="service-name">舒缓干眼服务</div>
+                            <div class="service-price">¥298起</div>
+                        </div>
+                        <div class="service-item" onclick="navigateTo('service-detail')">
+                            <div class="service-icon">
+                                <span class="material-icons">face</span>
+                            </div>
+                            <div class="service-name">消除眼袋服务</div>
+                            <div class="service-price">¥398起</div>
+                        </div>
+                        <div class="service-item" onclick="navigateTo('service-detail')">
+                            <div class="service-icon">
+                                <span class="material-icons">wb_sunny</span>
+                            </div>
+                            <div class="service-name">眼周提亮服务</div>
+                            <div class="service-price">¥198起</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-category">
+                    <div class="section-title">眼部检测</div>
+                    <div class="service-grid">
+                        <div class="service-item" onclick="navigateTo('detection-page')">
+                            <div class="service-icon">
+                                <span class="material-icons">visibility</span>
+                            </div>
+                            <div class="service-name">眼部AI检测</div>
+                            <div class="service-price">¥98</div>
+                        </div>
+                        <div class="service-item" onclick="navigateTo('detection-page')">
+                            <div class="service-icon">
+                                <span class="material-icons">assessment</span>
+                            </div>
+                            <div class="service-name">专业眼健康评估</div>
+                            <div class="service-price">¥198</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-category">
+                    <div class="section-title">套餐推荐</div>
+                    <div class="service-grid">
+                        <div class="service-item" onclick="navigateTo('service-detail')">
+                            <div class="service-icon">
+                                <span class="material-icons">card_giftcard</span>
+                            </div>
+                            <div class="service-name">眼部护理套餐</div>
+                            <div class="service-price">¥498</div>
+                        </div>
+                        <div class="service-item" onclick="navigateTo('service-detail')">
+                            <div class="service-icon">
+                                <span class="material-icons">stars</span>
+                            </div>
+                            <div class="service-name">眼部全套呵护</div>
+                            <div class="service-price">¥998</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务详情页面 -->
+            <div class="page" id="service-detail">
+                <img src="https://via.placeholder.com/1920x500/2196F3/FFFFFF?text=舒缓干眼服务" alt="服务图片"
+                    style="width: 100%; border-radius: var(--border-radius); margin-bottom: 16px;">
+
+                <div class="card">
+                    <div class="section-title">服务介绍</div>
+                    <p>专业舒缓干眼症状，缓解眼疲劳，改善眼部不适。针对长时间使用电子设备导致的眼部问题，提供全方位的眼部护理方案。</p>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">服务流程</div>
+                    <div class="detection-step">
+                        <div class="step-number">1</div>
+                        <div>眼部检测评估</div>
+                    </div>
+                    <div class="detection-step">
+                        <div class="step-number">2</div>
+                        <div>专业眼部清洁</div>
+                    </div>
+                    <div class="detection-step">
+                        <div class="step-number">3</div>
+                        <div>舒缓精华导入</div>
+                    </div>
+                    <div class="detection-step">
+                        <div class="step-number">4</div>
+                        <div>眼部按摩护理</div>
+                    </div>
+                    <div class="detection-step">
+                        <div class="step-number">5</div>
+                        <div>效果评估</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">适用人群</div>
+                    <p>长时间用眼人群、干眼症患者、眼疲劳人群、电子设备使用频繁人群</p>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: var(--text-secondary);">服务时长</div>
+                            <div style="font-weight: 500;">45分钟</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-secondary);">价格</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">¥298</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <button class="button" style="flex: 1;">预约服务</button>
+                    <button class="button secondary" style="flex: 1;">推荐给客户</button>
+                </div>
+            </div>
+
+            <!-- 检测页面 -->
+            <div class="page" id="detection-page">
+                <div class="detection-intro">
+                    <img src="https://via.placeholder.com/400x200/2196F3/FFFFFF?text=眼部AI检测" alt="检测流程图示"
+                        class="detection-image">
+                    <h2 style="margin-bottom: 16px;">眼部AI检测</h2>
+                    <p>通过AI技术分析眼部状况，提供五维度健康评分和个性化方案推荐</p>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">检测内容</div>
+                    <div class="detection-steps">
+                        <div class="detection-step">
+                            <div class="step-number">1</div>
+                            <div>9题专业问卷评估</div>
+                        </div>
+                        <div class="detection-step">
+                            <div class="step-number">2</div>
+                            <div>AI眼部图像分析</div>
+                        </div>
+                        <div class="detection-step">
+                            <div class="step-number">3</div>
+                            <div>五维度健康评分</div>
+                        </div>
+                        <div class="detection-step">
+                            <div class="step-number">4</div>
+                            <div>个性化方案推荐</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+                        <div>
+                            <div style="color: var(--text-secondary);">检测时长</div>
+                            <div style="font-weight: 500;">约5分钟</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-secondary);">检测费用</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">¥98 (可抵扣产品/服务)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">最近检测客户</div>
+                    <div class="recent-customers">
+                        <div class="customer-item" onclick="startDetection('existing')">
+                            <div style="font-weight: 500;">张女士</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">3天前</div>
+                        </div>
+                        <div class="customer-item" onclick="startDetection('existing')">
+                            <div style="font-weight: 500;">李先生</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">1周前</div>
+                        </div>
+                        <div class="customer-item" onclick="startDetection('existing')">
+                            <div style="font-weight: 500;">王女士</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">1月前</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detection-actions">
+                    <button class="button" onclick="startDetection('new')">开始新检测</button>
+                </div>
+            </div>
+
+            <!-- 客户页面 -->
+            <div class="page" id="customers-page">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="section-title">客户管理</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="icon-button" style="background-color: var(--card-color);">
+                            <span class="material-icons">search</span>
+                        </button>
+                        <button class="icon-button" style="background-color: var(--card-color);">
+                            <span class="material-icons">add</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="customer-filter">
+                    <div class="filter-item active">全部</div>
+                    <div class="filter-item">新客户</div>
+                    <div class="filter-item">复购客户</div>
+                    <div class="filter-item">VIP客户</div>
+                    <div class="filter-item">流失客户</div>
+                </div>
+
+                <div class="customer-grid">
+                    <div class="customer-card" onclick="navigateTo('customer-detail')">
+                        <div class="customer-name">张女士</div>
+                        <div class="customer-info">135****8888</div>
+                        <div class="customer-info">最近: 3天前</div>
+                        <div class="customer-stats">
+                            <div>消费: ¥1298</div>
+                            <div>检测: 3次</div>
+                        </div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('customer-detail')">
+                        <div class="customer-name">李先生</div>
+                        <div class="customer-info">139****6666</div>
+                        <div class="customer-info">最近: 1周前</div>
+                        <div class="customer-stats">
+                            <div>消费: ¥698</div>
+                            <div>检测: 2次</div>
+                        </div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('customer-detail')">
+                        <div class="customer-name">王女士</div>
+                        <div class="customer-info">187****2222</div>
+                        <div class="customer-info">最近: 1月前</div>
+                        <div class="customer-stats">
+                            <div>消费: ¥498</div>
+                            <div>检测: 1次</div>
+                        </div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('customer-detail')">
+                        <div class="customer-name">赵先生</div>
+                        <div class="customer-info">158****5555</div>
+                        <div class="customer-info">最近: 2周前</div>
+                        <div class="customer-stats">
+                            <div>消费: ¥998</div>
+                            <div>检测: 2次</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="background-color: var(--card-color); border-radius: var(--border-radius); padding: 16px; margin-top: 24px; display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div style="font-weight: 500;">128</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">总客户</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">15</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">本月新增</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">45%</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">复购率</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户详情页面 -->
+            <div class="page" id="customer-detail">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <span class="material-icons">person</span>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">张女士</div>
+                        <div class="profile-role">电话: 135****8888</div>
+                        <div class="profile-role">年龄: 35岁 性别: 女</div>
+                    </div>
+                    <button class="icon-button" style="background-color: var(--card-color);">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <div
+                        style="background-color: #E3F2FD; color: var(--primary-color); border-radius: 16px; padding: 4px 12px; font-size: 14px;">
+                        干眼症</div>
+                    <div
+                        style="background-color: #E3F2FD; color: var(--primary-color); border-radius: 16px; padding: 4px 12px; font-size: 14px;">
+                        敏感肌</div>
+                    <div
+                        style="background-color: #E3F2FD; color: var(--primary-color); border-radius: 16px; padding: 4px 12px; font-size: 14px;">
+                        VIP客户</div>
+                    <div
+                        style="background-color: #EEEEEE; color: var(--text-secondary); border-radius: 16px; padding: 4px 12px; font-size: 14px;">
+                        +添加</div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">检测记录</div>
+                    <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 12px; margin-bottom: 8px;"
+                        onclick="navigateTo('detection-result')">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <div>2025-03-15</div>
+                            <div style="font-weight: 500;">综合评分: 78</div>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">主要问题: 眼疲劳、轻度眼袋</div>
+                    </div>
+                    <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 12px;"
+                        onclick="navigateTo('detection-result')">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <div>2025-02-10</div>
+                            <div style="font-weight: 500;">综合评分: 72</div>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">主要问题: 眼疲劳、眼纹、眼袋</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">消费记录</div>
+                    <div
+                        style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <div>2025-03-15</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">¥298</div>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">舒缓干眼服务</div>
+                    </div>
+                    <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <div>2025-02-10</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">¥998</div>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">眼部护理套餐</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <button class="button" style="flex: 1;" onclick="startDetection('existing')">开始检测</button>
+                    <button class="button secondary" style="flex: 1;">推荐服务</button>
+                    <button class="button secondary" style="flex: 1;">添加跟进</button>
+                </div>
+            </div>
+
+            <!-- 我的页面（美容顾问视图） -->
+            <div class="page" id="profile-page">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <span class="material-icons">person</span>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">李美容</div>
+                        <div class="profile-role">角色: 美容顾问</div>
+                        <div class="profile-role">门店: 美睛美科中心店</div>
+                    </div>
+                </div>
+
+                <div class="section-title">我的业绩</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">本月检测</div>
+                        <div class="stat-value">45</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">本月转化</div>
+                        <div class="stat-value">60%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">本月销售</div>
+                        <div class="stat-value">¥12580</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">目标完成</div>
+                        <div class="stat-value">85%</div>
+                    </div>
+                </div>
+
+                <div class="section-title">今日数据</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">今日检测</div>
+                        <div class="stat-value">5</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">今日转化</div>
+                        <div class="stat-value">60%</div>
+                    </div>
+                </div>
+
+                <div class="section-title">功能中心</div>
+                <div class="function-grid">
+                    <div class="function-item" onclick="navigateTo('detection-history')">
+                        <div class="function-icon">
+                            <span class="material-icons">visibility</span>
+                        </div>
+                        <div class="function-name">检测记录</div>
+                    </div>
+                    <div class="function-item" onclick="navigateTo('customers-page')">
+                        <div class="function-icon">
+                            <span class="material-icons">people</span>
+                        </div>
+                        <div class="function-name">客户管理</div>
+                    </div>
+                    <div class="function-item disabled" data-tooltip="暂不实现">
+                        <div class="function-icon">
+                            <span class="material-icons">school</span>
+                        </div>
+                        <div class="function-name">知识学习</div>
+                    </div>
+                    <div class="function-item disabled" data-tooltip="暂不实现">
+                        <div class="function-icon">
+                            <span class="material-icons">help</span>
+                        </div>
+                        <div class="function-name">帮助中心</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <button class="button secondary" style="flex: 1;" onclick="showRoleSwitchModal()">切换账号</button>
+                    <button class="button danger" style="flex: 1;" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <!-- 检测流程 - 客户选择 -->
+            <div class="page" id="detection-customer">
+                <div class="flow-header">
+                    <div class="flow-title">客户选择</div>
+                    <div class="flow-progress">1/4</div>
+                </div>
+
+                <div style="position: relative; margin-bottom: 16px;">
+                    <input type="text" placeholder="搜索客户/输入电话号码"
+                        style="width: 100%; padding: 12px 16px; padding-left: 48px; border-radius: 24px; border: none; background-color: var(--card-color); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    <span class="material-icons"
+                        style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">search</span>
+                </div>
+
+                <div class="customer-grid">
+                    <div class="customer-card" onclick="navigateTo('detection-questionnaire')">
+                        <div class="customer-name">张女士</div>
+                        <div class="customer-info">135****8888</div>
+                        <div class="customer-info">上次检测: 3天前</div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('detection-questionnaire')">
+                        <div class="customer-name">李先生</div>
+                        <div class="customer-info">139****6666</div>
+                        <div class="customer-info">首次检测</div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('detection-questionnaire')">
+                        <div class="customer-name">王女士</div>
+                        <div class="customer-info">187****2222</div>
+                        <div class="customer-info">上次检测: 1月前</div>
+                    </div>
+                    <div class="customer-card" onclick="navigateTo('detection-questionnaire')">
+                        <div class="customer-name">赵先生</div>
+                        <div class="customer-info">158****5555</div>
+                        <div class="customer-info">上次检测: 2周前</div>
+                    </div>
+                </div>
+
+                <button class="button" style="width: 100%; margin-top: 24px;" onclick="navigateTo('new-customer')">
+                    <span class="material-icons">add</span>
+                    新建客户
+                </button>
+            </div>
+
+            <!-- 新建客户页面 -->
+            <div class="page" id="new-customer">
+                <div class="flow-header">
+                    <div class="flow-title">新建客户</div>
+                    <button class="icon-button" onclick="navigateTo('detection-customer')"
+                        style="background-color: var(--card-color);">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+
+                <div class="profile-header" style="margin-bottom: 32px;">
+                    <div class="profile-avatar" style="cursor: pointer;"
+                        onclick="document.getElementById('avatar-upload').click()">
+                        <span class="material-icons">add_a_photo</span>
+                        <input type="file" id="avatar-upload" style="display: none;" accept="image/*">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-role">点击左侧添加头像照片</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">基本信息</div>
+                    <div style="display: grid; gap: 16px;">
+                        <div class="form-group">
+                            <label>姓名 <span style="color: #F44336;">*</span></label>
+                            <input type="text" placeholder="请输入客户姓名" class="form-input">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>性别 <span style="color: #F44336;">*</span></label>
+                                <div class="radio-group">
+                                    <div class="radio-item" onclick="selectGender(this, '女')">
+                                        <div class="radio-button"></div>
+                                        <div class="radio-label">女</div>
+                                    </div>
+                                    <div class="radio-item" onclick="selectGender(this, '男')">
+                                        <div class="radio-button"></div>
+                                        <div class="radio-label">男</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>年龄 <span style="color: #F44336;">*</span></label>
+                                <select class="form-input">
+                                    <option value="">请选择</option>
+                                    <option value="18-24">18-24岁</option>
+                                    <option value="25-34">25-34岁</option>
+                                    <option value="35-44">35-44岁</option>
+                                    <option value="45-54">45-54岁</option>
+                                    <option value="55+">55岁以上</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>手机号 <span style="color: #F44336;">*</span></label>
+                            <input type="tel" placeholder="请输入手机号" class="form-input" maxlength="11">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">日常用眼情况</div>
+                    <div class="form-group">
+                        <label>每日用眼时长</label>
+                        <div class="radio-group">
+                            <div class="radio-item" onclick="selectEyeTime(this)">
+                                <div class="radio-button"></div>
+                                <div class="radio-label">＜2小时</div>
+                            </div>
+                            <div class="radio-item" onclick="selectEyeTime(this)">
+                                <div class="radio-button"></div>
+                                <div class="radio-label">2-6小时</div>
+                            </div>
+                            <div class="radio-item" onclick="selectEyeTime(this)">
+                                <div class="radio-button"></div>
+                                <div class="radio-label">＞6小时</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label>主要用眼场景（可多选）</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <div class="checkbox"></div>
+                                <div class="checkbox-label">电脑办公</div>
+                            </div>
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <div class="checkbox"></div>
+                                <div class="checkbox-label">手机娱乐</div>
+                            </div>
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <div class="checkbox"></div>
+                                <div class="checkbox-label">看书学习</div>
+                            </div>
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <div class="checkbox"></div>
+                                <div class="checkbox-label">户外活动</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <button class="button" style="flex: 1;" onclick="startNewCustomerDetection()">开始检测</button>
+                    <button class="button secondary" style="flex: 1;" onclick="saveCustomerInfo()">保存信息</button>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- 检测流程 - 问卷调查 -->
+            <div class="page" id="detection-questionnaire">
+                <div class="flow-header">
+                    <div class="flow-title">问卷调查</div>
+                    <div class="flow-progress">2/4</div>
+                </div>
+
+                <!-- 问题1 -->
+                <div class="question-card" id="question-1">
+                    <div class="question-title">问题1: 眼睛异物感情况（进沙子）</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">有</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">一般，偶尔有这种感觉</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">无</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估重度/中度/轻度干眼</div>
+                </div>
+
+                <!-- 问题2 -->
+                <div class="question-card" id="question-2" style="display: none;">
+                    <div class="question-title">问题2: 眼睛不适感与劳累感情况（看书/看电视时）</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">有</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">一般，偶尔有这种感觉</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">无</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估重度/中度/轻度视疲劳</div>
+                </div>
+
+                <!-- 问题3 -->
+                <div class="question-card" id="question-3" style="display: none;">
+                    <div class="question-title">问题3: 每日看手机/电视的时长</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">＞6h</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">2~6h</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">＜2h</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估视疲劳程度和眨眼频率</div>
+                </div>
+
+                <!-- 问题4 -->
+                <div class="question-card" id="question-4" style="display: none;">
+                    <div class="question-title">问题4: 纹眼线情况</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">纹过</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">没纹过</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼睑堵塞程度</div>
+                </div>
+
+                <!-- 问题5 -->
+                <div class="question-card" id="question-5" style="display: none;">
+                    <div class="question-title">问题5: 种植假睫毛情况</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">种植过</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">没种植过</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼睑堵塞程度</div>
+                </div>
+
+                <!-- 问题6 -->
+                <div class="question-card" id="question-6" style="display: none;">
+                    <div class="question-title">问题6: 眼皮松弛程度</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">严重</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">轻微</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">良好</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼皮松弛程度</div>
+                </div>
+
+                <!-- 问题7 -->
+                <div class="question-card" id="question-7" style="display: none;">
+                    <div class="question-title">问题7: 眼窝凹陷情况</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">严重</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">轻微</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">无</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼窝凹陷程度</div>
+                </div>
+
+                <!-- 问题8 -->
+                <div class="question-card" id="question-8" style="display: none;">
+                    <div class="question-title">问题8: 眼袋情况</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">眼袋明显且面积大</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">眼袋明显但面积不大</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">轻微有点眼袋</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">无</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼袋程度</div>
+                </div>
+
+                <!-- 问题9 -->
+                <div class="question-card" id="question-9" style="display: none;">
+                    <div class="question-title">问题9: 眼压情况</div>
+                    <div class="question-options">
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">明显硬、鼓胀（硬度与额头一样）</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">有点硬、鼓胀（介于两者之间）</div>
+                        </div>
+                        <div class="option-item" onclick="selectOption(this)">
+                            <div class="option-radio"></div>
+                            <div class="option-label">有弹性、略微鼓胀（硬度与鼻尖一样）</div>
+                        </div>
+                    </div>
+                    <div class="question-hint">此题用于评估眼压水平</div>
+                </div>
+
+                <div class="flow-actions">
+                    <button class="button secondary" onclick="previousQuestion()">上一题</button>
+                    <!-- <button class="button" onclick="nextQuestion()">下一题</button> -->
+                </div>
+            </div>
+
+            <!-- 检测流程 - 图像采集 -->
+            <div class="page" id="detection-camera">
+                <div class="flow-header">
+                    <div class="flow-title">图像采集</div>
+                    <div class="flow-progress">3/4</div>
+                </div>
+
+                <div class="camera-container">
+                    <img src="https://via.placeholder.com/1920x1080/000000/FFFFFF?text=相机预览" alt="相机预览"
+                        class="camera-preview">
+                    <div class="camera-guide"></div>
+                    <div class="camera-instruction">
+                        请引导客户:
+                        <br>- 眼睛对准框内
+                        <br>- 保持自然表情
+                        <br>- 避免眨眼
+                    </div>
+                </div>
+
+                <div class="camera-controls">
+                    <button class="icon-button" style="background-color: var(--card-color);">
+                        <span class="material-icons">wb_sunny</span>
+                    </button>
+                    <div class="camera-button" onclick="navigateTo('detection-result')">
+                        <div class="camera-button-inner"></div>
+                    </div>
+                    <button class="icon-button" style="background-color: var(--card-color);">
+                        <span class="material-icons">flip_camera_android</span>
+                    </button>
+                </div>
+
+                <div class="flow-actions">
+                    <button class="button secondary" onclick="navigateTo('detection-questionnaire')">上一步</button>
+                    <button class="button secondary" disabled>下一步</button>
+                </div>
+            </div>
+
+            <!-- 检测流程 - 结果展示 -->
+            <div class="page" id="detection-result">
+                <div class="flow-header">
+                    <div class="flow-title">检测结果</div>
+                    <div class="flow-progress">4/4</div>
+                </div>
+
+                <div class="result-header">
+                    <div class="result-score">78</div>
+                    <div class="result-level">健康等级: 一般</div>
+                </div>
+
+                <div class="radar-chart">
+                    <div class="radar-chart-placeholder">
+                        <img src="https://via.placeholder.com/500x300/FFFFFF/2196F3?text=五维度雷达图" alt="五维度雷达图"
+                            style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+
+                <div class="dimension-list">
+                    <div class="dimension-item" onclick="navigateTo('dimension-detail')">
+                        <div class="dimension-color" style="background-color: #4CAF50;"></div>
+                        <div class="dimension-name">疲劳度</div>
+                        <div class="dimension-score">72</div>
+                        <span class="material-icons dimension-arrow">chevron_right</span>
+                    </div>
+                    <div class="dimension-item" onclick="navigateTo('dimension-detail')">
+                        <div class="dimension-color" style="background-color: #4CAF50;"></div>
+                        <div class="dimension-name">浑浊度</div>
+                        <div class="dimension-score">72</div>
+                        <span class="material-icons dimension-arrow">chevron_right</span>
+                    </div>
+                    <div class="dimension-item" onclick="navigateTo('dimension-detail')">
+                        <div class="dimension-color" style="background-color: #2196F3;"></div>
+                        <div class="dimension-name">脆弱度</div>
+                        <div class="dimension-score">80</div>
+                        <span class="material-icons dimension-arrow">chevron_right</span>
+                    </div>
+                    <div class="dimension-item" onclick="navigateTo('dimension-detail')">
+                        <div class="dimension-color" style="background-color: #9C27B0;"></div>
+                        <div class="dimension-name">松弛度</div>
+                        <div class="dimension-score">75</div>
+                        <span class="material-icons dimension-arrow">chevron_right</span>
+                    </div>
+                    <div class="dimension-item" onclick="navigateTo('dimension-detail')">
+                        <div class="dimension-color" style="background-color: #FFC107;"></div>
+                        <div class="dimension-name">老化度</div>
+                        <div class="dimension-score">85</div>
+                        <span class="material-icons dimension-arrow">chevron_right</span>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="button" onclick="navigateTo('detection-detail')">查看详情</button>
+                    <button class="button secondary" onclick="navigateTo('detection-report')">检测报告</button>
+                    <button class="button secondary" onclick="navigateTo('recommendation')">推荐方案</button>
+                </div>
+            </div>
+
+            <!-- 维度详情页面 -->
+            <div class="page" id="dimension-detail">
+                <div class="dimension-detail-header">
+                    <div class="dimension-detail-score">65</div>
+                    <div class="dimension-detail-level">疲劳度 - 中度</div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="eye-image-container">
+                        <img src="https://via.placeholder.com/400x300/FFFFFF/2196F3?text=眼部图像" alt="眼部图像"
+                            class="eye-image">
+                    </div>
+                    <div class="analysis-container">
+                        <div class="analysis-title">问题分析</div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">眼睛异物感:</div>
+                            <div class="analysis-value">中度</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">眼睛不适感:</div>
+                            <div class="analysis-value">轻度</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">电子设备使用:</div>
+                            <div class="analysis-value">重度</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions-container">
+                    <div class="suggestions-title">改善建议</div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-number">1</div>
+                        <div class="suggestion-text">减少电子设备使用时间，每小时休息10分钟</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-number">2</div>
+                        <div class="suggestion-text">注意用眼卫生，每小时休息10分钟</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-number">3</div>
+                        <div class="suggestion-text">使用专业眼部舒缓产品</div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="button" onclick="navigateTo('detection-result')">其他维度</button>
+                    <button class="button secondary" onclick="navigateTo('recommendation')">推荐产品</button>
+                </div>
+            </div>
+
+            <!-- 角色切换对话框 -->
+            <div class="modal-overlay" id="role-switch-modal">
+                <div class="modal-content">
+                    <div class="modal-title">切换账号</div>
+                    <div class="role-options">
+                        <div class="role-option" onclick="switchRole('beauty')">
+                            <div class="role-icon">
+                                <span class="material-icons">person</span>
+                            </div>
+
+                            <div class="role-info">
+                                <div class="role-name">美容顾问</div>
+                                <div class="role-description">查看个人业绩和客户管理</div>
+                            </div>
+                        </div>
+                        <div class="role-option" onclick="switchRole('manager')">
+                            <div class="role-icon">
+                                <span class="material-icons">admin_panel_settings</span>
+                            </div>
+                            <div class="role-info">
+                                <div class="role-name">店长</div>
+                                <div class="role-description">管理门店和查看所有员工信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 检测详情页面 -->
+            <div class="page" id="detection-detail">
+                <div class="flow-header">
+                    <div class="flow-title">检测详情</div>
+                    <div style="color: var(--text-secondary);">2025-03-15 14:30</div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">问卷分析</div>
+                    <div style="display: grid; gap: 16px;">
+                        <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 16px;">
+                            <div style="font-weight: 500; margin-bottom: 8px;">眼部疲劳指数：75分</div>
+                            <div style="color: var(--text-secondary);">根据问卷答案分析，您存在中度眼疲劳症状：</div>
+                            <ul style="color: var(--text-secondary); margin: 8px 0 0 20px;">
+                                <li>每日用眼时间超过6小时</li>
+                                <li>经常感觉眼睛干涩不适</li>
+                                <li>存在轻微的异物感</li>
+                            </ul>
+                        </div>
+
+                        <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 16px;">
+                            <div style="font-weight: 500; margin-bottom: 8px;">眼部健康习惯：65分</div>
+                            <div style="color: var(--text-secondary);">存在以下不良用眼习惯：</div>
+                            <ul style="color: var(--text-secondary); margin: 8px 0 0 20px;">
+                                <li>长时间注视电子屏幕</li>
+                                <li>休息间隔时间不足</li>
+                                <li>用眼环境光线不足</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="section-title">AI图像分析</div>
+                    <div class="image-analysis-grid" style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="analysis-item"
+                            style="background: #F5F5F5; border-radius: var(--border-radius); padding: 20px;">
+                            <div class="analysis-title"
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                                <span class="material-icons" style="color: var(--primary-color);">visibility</span>
+                                <span style="font-size: 18px; font-weight: 500;">黑眼圈分析</span>
+                            </div>
+                            <div class="analysis-content" style="display: flex; flex-direction: column; gap: 16px;">
+                                <div class="analysis-images" style="display: flex; justify-content: center; gap: 20px;">
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="原始图像"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            原始图像</div>
+                                    </div>
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="AI标注"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            AI标注</div>
+                                    </div>
+                                </div>
+                                <div class="analysis-result"
+                                    style="background: white; border-radius: 8px; padding: 16px;">
+                                    <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 8px;">
+                                        检测结果：中度黑眼圈</div>
+                                    <div style="display: flex; gap: 24px; color: var(--text-secondary);">
+                                        <div>• 面积：12.5cm²</div>
+                                        <div>• 深度：中等</div>
+                                        <div>• 分布：主要集中在眼睑下方</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-item"
+                            style="background: #F5F5F5; border-radius: var(--border-radius); padding: 20px;">
+                            <div class="analysis-title"
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                                <span class="material-icons" style="color: var(--primary-color);">visibility</span>
+                                <span style="font-size: 18px; font-weight: 500;">眼纹分析</span>
+                            </div>
+                            <div class="analysis-content" style="display: flex; flex-direction: column; gap: 16px;">
+                                <div class="analysis-images" style="display: flex; justify-content: center; gap: 20px;">
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="原始图像"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            原始图像</div>
+                                    </div>
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="AI标注"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            AI标注</div>
+                                    </div>
+                                </div>
+                                <div class="analysis-result"
+                                    style="background: white; border-radius: 8px; padding: 16px;">
+                                    <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 8px;">
+                                        检测结果：轻度眼纹</div>
+                                    <div style="display: flex; gap: 24px; color: var(--text-secondary);">
+                                        <div>• 数量：6条</div>
+                                        <div>• 深度：浅表层</div>
+                                        <div>• 类型：主要为鱼尾纹</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-item"
+                            style="background: #F5F5F5; border-radius: var(--border-radius); padding: 20px;">
+                            <div class="analysis-title"
+                                style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                                <span class="material-icons" style="color: var(--primary-color);">visibility</span>
+                                <span style="font-size: 18px; font-weight: 500;">眼袋分析</span>
+                            </div>
+                            <div class="analysis-content" style="display: flex; flex-direction: column; gap: 16px;">
+                                <div class="analysis-images" style="display: flex; justify-content: center; gap: 20px;">
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="原始图像"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            原始图像</div>
+                                    </div>
+                                    <div class="image-compare" style="text-align: center;">
+                                        <img src="https://via.placeholder.com/300x200" alt="AI标注"
+                                            style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <div class="image-label" style="margin-top: 8px; color: var(--text-secondary);">
+                                            AI标注</div>
+                                    </div>
+                                </div>
+                                <div class="analysis-result"
+                                    style="background: white; border-radius: 8px; padding: 16px;">
+                                    <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 8px;">
+                                        检测结果：轻微眼袋</div>
+                                    <div style="display: flex; gap: 24px; color: var(--text-secondary);">
+                                        <div>• 突出度：2.3mm</div>
+                                        <div>• 面积：小面积</div>
+                                        <div>• 性质：浅表性眼袋</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="section-title">历史对比</div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+                            <thead>
+                                <tr style="background-color: #F5F5F5;">
+                                    <th style="padding: 12px; text-align: left;">检测日期</th>
+                                    <th style="padding: 12px; text-align: center;">综合评分</th>
+                                    <th style="padding: 12px; text-align: center;">疲劳度</th>
+                                    <th style="padding: 12px; text-align: center;">黑眼圈</th>
+                                    <th style="padding: 12px; text-align: center;">眼纹</th>
+                                    <th style="padding: 12px; text-align: center;">眼袋</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #E0E0E0;">
+                                    <td style="padding: 12px;">2025-03-15</td>
+                                    <td style="padding: 12px; text-align: center; color: var(--primary-color);">78</td>
+                                    <td style="padding: 12px; text-align: center;">75</td>
+                                    <td style="padding: 12px; text-align: center;">72</td>
+                                    <td style="padding: 12px; text-align: center;">80</td>
+                                    <td style="padding: 12px; text-align: center;">85</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #E0E0E0;">
+                                    <td style="padding: 12px;">2025-02-10</td>
+                                    <td style="padding: 12px; text-align: center; color: var(--primary-color);">72</td>
+                                    <td style="padding: 12px; text-align: center;">70</td>
+                                    <td style="padding: 12px; text-align: center;">68</td>
+                                    <td style="padding: 12px; text-align: center;">75</td>
+                                    <td style="padding: 12px; text-align: center;">75</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <button class="button" style="flex: 1;" onclick="navigateTo('detection-report')">查看报告</button>
+                    <button class="button secondary" style="flex: 1;"
+                        onclick="navigateTo('recommendation')">查看方案</button>
+                </div>
+            </div>
+
+
+
+
+
+
+            <!-- 检测报告页面 -->
+            <div class="page" id="detection-report">
+                <div class="flow-header">
+                    <div class="flow-title">检测报告</div>
+                    <div class="report-date">2025-03-15 14:30</div>
+                </div>
+
+                <div class="report-header">
+                    <div class="report-customer-info">
+                        <div class="report-customer-item">
+                            <div class="report-customer-label">客户姓名</div>
+                            <div class="report-customer-value">张女士</div>
+                        </div>
+                        <div class="report-customer-item">
+                            <div class="report-customer-label">年龄</div>
+                            <div class="report-customer-value">35岁</div>
+                        </div>
+                        <div class="report-customer-item">
+                            <div class="report-customer-label">性别</div>
+                            <div class="report-customer-value">女</div>
+                        </div>
+                        <div class="report-customer-item">
+                            <div class="report-customer-label">检测次数</div>
+                            <div class="report-customer-value">第3次</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-section-title">问卷答案分析</div>
+                    <div class="questionnaire-results">
+                        <div class="question-result">
+                            <div class="question-text">1. 眼睛异物感情况</div>
+                            <div class="answer-text">一般，偶尔有这种感觉</div>
+                            <div class="analysis-text">轻度干眼症状</div>
+                        </div>
+                        <!-- 其他问题的答案和分析 -->
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-section-title">AI图像分析</div>
+                    <div class="image-analysis-grid">
+                        <div class="analysis-item">
+                            <div class="analysis-title">
+                                <span class="material-icons">visibility</span>
+                                黑眼圈情况
+                            </div>
+                            <div class="analysis-images">
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="原始图像">
+                                    <div class="image-label">检测图像</div>
+                                </div>
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="分析图像">
+                                    <div class="image-label">AI分析</div>
+                                </div>
+                            </div>
+                            <div class="analysis-result">
+                                <div class="result-label">分析结果：</div>
+                                <div class="result-text">轻度黑眼圈，主要分布在眼睑下方</div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-item">
+                            <div class="analysis-title">
+                                <span class="material-icons">visibility</span>
+                                虹膜血丝
+                            </div>
+                            <div class="analysis-images">
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="原始图像">
+                                    <div class="image-label">检测图像</div>
+                                </div>
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="分析图像">
+                                    <div class="image-label">AI分析</div>
+                                </div>
+                            </div>
+                            <div class="analysis-result">
+                                <div class="result-label">分析结果：</div>
+                                <div class="result-text">中度血丝，呈放射状分布</div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-item">
+                            <div class="analysis-title">
+                                <span class="material-icons">visibility</span>
+                                眼纹情况
+                            </div>
+                            <div class="analysis-images">
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="原始图像">
+                                    <div class="image-label">检测图像</div>
+                                </div>
+                                <div class="image-compare">
+                                    <img src="https://via.placeholder.com/200x150" alt="分析图像">
+                                    <div class="image-label">AI分析</div>
+                                </div>
+                            </div>
+                            <div class="analysis-result">
+                                <div class="result-label">分析结果：</div>
+                                <div class="result-text">轻微鱼尾纹，眼角细纹明显</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <div class="report-section-title">综合评估</div>
+                    <div class="radar-chart">
+                        <div class="radar-chart-placeholder">
+                            <img src="https://via.placeholder.com/500x300/FFFFFF/2196F3?text=五维度雷达图" alt="五维度雷达图"
+                                style="max-width: 100%; max-height: 100%;">
+                        </div>
+                    </div>
+                    <div class="dimension-scores">
+                        <div class="dimension-score-item">
+                            <div class="dimension-name">干眼度</div>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 65%;"></div>
+                            </div>
+                            <div class="score-value">65</div>
+                        </div>
+                        <!-- 其他维度得分 -->
+                    </div>
+                </div>
+
+                <div class="report-actions">
+                    <button class="button" onclick="navigateTo('recommendation')">查看推荐方案</button>
+                    <button class="button secondary" onclick="shareReport()">分享报告</button>
+                </div>
+            </div>
+
+            <!-- 推荐方案页面 -->
+            <div class="page" id="recommendation">
+                <div class="flow-header">
+                    <div class="flow-title">个性化方案</div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">问题汇总</div>
+                    <div class="problem-list">
+                        <div class="problem-item">
+                            <div class="problem-title">干眼症状</div>
+                            <div class="problem-description">轻度干眼，伴有异物感</div>
+                        </div>
+                        <div class="problem-item">
+                            <div class="problem-title">眼疲劳</div>
+                            <div class="problem-description">中度视疲劳，长时间用眼</div>
+                        </div>
+                        <!-- 其他问题 -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">推荐方案</div>
+                    <div class="recommendation-list">
+                        <div class="recommendation-item">
+                            <div class="recommendation-header">
+                                <div class="recommendation-icon">
+                                    <span class="material-icons">spa</span>
+                                </div>
+                                <div class="recommendation-info">
+                                    <div class="recommendation-name">舒缓干眼护理套餐</div>
+                                    <div class="recommendation-price">¥398</div>
+                                </div>
+                                <button class="button secondary">预约</button>
+                            </div>
+                            <div class="recommendation-details">
+                                <div class="detail-item">
+                                    <span class="material-icons">check_circle</span>
+                                    <span>专业眼部按摩</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="material-icons">check_circle</span>
+                                    <span>热敷理疗</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="material-icons">check_circle</span>
+                                    <span>营养导入</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 其他推荐方案 -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="section-title">日常建议</div>
+                    <div class="advice-list">
+                        <div class="advice-item">
+                            <span class="material-icons">timer</span>
+                            <div class="advice-content">
+                                <div class="advice-title">用眼时间管理</div>
+                                <div class="advice-description">每隔1小时休息10分钟，远眺放松眼部肌肉</div>
+                            </div>
+                        </div>
+                        <!-- 其他建议 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 登录页面 -->
+            <div class="page" id="login-page">
+                <div style="max-width: 400px; margin: 40px auto; text-align: center;">
+                    <div class="profile-avatar" style="width: 80px; height: 80px; margin: 0 auto 24px;">
+                        <span class="material-icons" style="font-size: 40px;">person</span>
+                    </div>
+
+                    <div class="role-options" style="margin-bottom: 24px;">
+                        <div class="role-option selected" onclick="selectLoginRole(this, 'beauty')">
+                            <div class="role-icon">
+                                <span class="material-icons">person</span>
+                            </div>
+                            <div class="role-info">
+                                <div class="role-name">美容顾问</div>
+                                <div class="role-description">查看个人业绩和客户管理</div>
+                            </div>
+                        </div>
+                        <div class="role-option" onclick="selectLoginRole(this, 'manager')">
+                            <div class="role-icon">
+                                <span class="material-icons">admin_panel_settings</span>
+                            </div>
+                            <div class="role-info">
+                                <div class="role-name">店长</div>
+                                <div class="role-description">管理门店和查看所有员工信息</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: grid; gap: 16px;">
+                            <div class="form-group">
+                                <input type="text" id="username" placeholder="请输入用户名" class="form-input" value="test">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="password" placeholder="请输入密码" class="form-input"
+                                    value="test">
+                            </div>
+                            <button class="button" onclick="login()">登录</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 店长的我的页面 -->
+            <div class="page" id="manager-profile-page">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <span class="material-icons">person</span>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">张店长</div>
+                        <div class="profile-role">角色: 店长</div>
+                        <div class="profile-role">门店: 美睛美科中心店</div>
+                    </div>
+                </div>
+
+                <div class="section-title">门店业绩</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">本月营业额</div>
+                        <div class="stat-value">¥128,580</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">本月客流量</div>
+                        <div class="stat-value">325</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">本月新客</div>
+                        <div class="stat-value">86</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">客单价</div>
+                        <div class="stat-value">¥395</div>
+                    </div>
+                </div>
+
+                <div class="section-title">今日数据</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">今日营业额</div>
+                        <div class="stat-value">¥12,580</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">今日客流</div>
+                        <div class="stat-value">35</div>
+                    </div>
+                </div>
+
+                <div class="section-title">功能中心</div>
+                <div class="function-grid">
+                    <div class="function-item" onclick="navigateTo('store-management')">
+                        <div class="function-icon">
+                            <span class="material-icons">store</span>
+                        </div>
+                        <div class="function-name">门店管理</div>
+                    </div>
+                    <div class="function-item" onclick="navigateTo('employee-management')">
+                        <div class="function-icon">
+                            <span class="material-icons">groups</span>
+                        </div>
+                        <div class="function-name">员工管理</div>
+                    </div>
+                    <div class="function-item" onclick="navigateTo('detection-history')">
+                        <div class="function-icon">
+                            <span class="material-icons">visibility</span>
+                        </div>
+                        <div class="function-name">检测记录</div>
+                    </div>
+                    <div class="function-item" onclick="navigateTo('customers-page')">
+                        <div class="function-icon">
+                            <span class="material-icons">people</span>
+                        </div>
+                        <div class="function-name">客户管理</div>
+                    </div>
+                    <div class="function-item disabled" data-tooltip="暂不实现">
+                        <div class="function-icon">
+                            <span class="material-icons">school</span>
+                        </div>
+                        <div class="function-name">知识学习</div>
+                    </div>
+                    <div class="function-item disabled" data-tooltip="暂不实现">
+                        <div class="function-icon">
+                            <span class="material-icons">help</span>
+                        </div>
+                        <div class="function-name">帮助中心</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-top: 24px;">
+                    <!-- <button class="button secondary" style="flex: 1;" onclick="showRoleSwitchModal()">切换账号</button> -->
+                    <button class="button danger" style="flex: 1;" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <!-- 店长-检测记录页面 -->
+            <div class="page" id="detection-history">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="section-title">检测记录</div>
+                    <div class="customer-filter">
+                        <div class="filter-item active" onclick="filterDetectionHistory('all')">全部</div>
+                        <div class="filter-item" onclick="filterDetectionHistory('today')">今日</div>
+                        <div class="filter-item" onclick="filterDetectionHistory('week')">7天</div>
+                        <div class="filter-item" onclick="filterDetectionHistory('month')">30天</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display: grid; gap: 16px;">
+                        <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <div style="font-weight: 500;">张女士</div>
+                                <div style="color: var(--text-secondary);">2025-03-15 14:30</div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="color: var(--text-secondary); margin-bottom: 4px;">检测顾问：李美容</div>
+                                    <div style="color: var(--text-secondary);">综合评分：78分</div>
+                                </div>
+                                <button class="button secondary" onclick="navigateTo('detection-result')">查看详情</button>
+                            </div>
+                        </div>
+                        <!-- 更多检测记录 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 店长-员工管理页面 -->
+            <div class="page" id="employee-management">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="section-title">员工管理</div>
+                    <button class="button" onclick="showAddEmployeeModal()">
+                        <span class="material-icons">add</span>
+                        添加员工
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div style="display: grid; gap: 16px;">
+                        <div style="background-color: #F5F5F5; border-radius: var(--border-radius); padding: 16px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="profile-avatar" style="width: 48px; height: 48px;">
+                                        <span class="material-icons">person</span>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500;">李美容</div>
+                                        <div style="color: var(--text-secondary);">美容顾问</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="button secondary" onclick="editEmployee(1)">编辑</button>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                                <div>
+                                    <div style="color: var(--text-secondary);">本月业绩</div>
+                                    <div style="font-weight: 500;">¥12,580</div>
+                                </div>
+                                <div>
+                                    <div style="color: var(--text-secondary);">本月检测</div>
+                                    <div style="font-weight: 500;">45次</div>
+                                </div>
+                                <div>
+                                    <div style="color: var(--text-secondary);">转化率</div>
+                                    <div style="font-weight: 500;">60%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 更多员工信息 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 店长-门店管理页面 -->
+            <div class="page" id="store-management">
+                <div class="section-title">门店信息</div>
+                <div class="card">
+                    <div style="display: grid; gap: 16px;">
+                        <div class="form-group">
+                            <label>门店名称</label>
+                            <input type="text" class="form-input" value="美睛美科中心店" id="store-name">
+                        </div>
+                        <div class="form-group">
+                            <label>门店地址</label>
+                            <input type="text" class="form-input" value="北京市朝阳区三里屯SOHO" id="store-address">
+                        </div>
+                        <div class="form-group">
+                            <label>联系电话</label>
+                            <input type="tel" class="form-input" value="010-88888888" id="store-phone">
+                        </div>
+                        <div class="form-group">
+                            <label>营业时间</label>
+                            <input type="text" class="form-input" value="10:00-22:00" id="store-hours">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">门店照片</div>
+                <div class="card">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                        <div style="position: relative;">
+                            <img src="https://via.placeholder.com/300x200" alt="门店照片"
+                                style="width: 100%; border-radius: var(--border-radius);">
+                            <button class="icon-button"
+                                style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5);"
+                                onclick="deleteStoreImage(1)">
+                                <span class="material-icons" style="color: white;">delete</span>
+                            </button>
+                        </div>
+                        <div style="position: relative;">
+                            <img src="https://via.placeholder.com/300x200" alt="门店照片"
+                                style="width: 100%; border-radius: var(--border-radius);">
+                            <button class="icon-button"
+                                style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5);"
+                                onclick="deleteStoreImage(2)">
+                                <span class="material-icons" style="color: white;">delete</span>
+                            </button>
+                        </div>
+                        <div onclick="uploadStoreImage()"
+                            style="border: 2px dashed #E0E0E0; border-radius: var(--border-radius); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; cursor: pointer;">
+                            <span class="material-icons"
+                                style="font-size: 32px; color: var(--text-secondary);">add_photo_alternate</span>
+                            <div style="color: var(--text-secondary); margin-top: 8px;">上传照片</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">地理位置</div>
+                <div class="card">
+                    <div id="store-map"
+                        style="height: 300px; border-radius: var(--border-radius); background-color: #F5F5F5; margin-bottom: 16px;">
+                        <!-- 这里将嵌入地图，使用实际地图API时替换 -->
+                        <img src="https://via.placeholder.com/800x300?text=地图"
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--border-radius);">
+                    </div>
+                    <button class="button" onclick="saveStoreInfo()">保存修改</button>
+                </div>
+            </div>
+
+            <!-- 添加员工对话框 -->
+            <div class="modal-overlay" id="add-employee-modal">
+                <div class="modal-content">
+                    <div class="modal-title">添加员工</div>
+                    <div style="display: grid; gap: 16px;">
+                        <div class="form-group">
+                            <label>姓名</label>
+                            <input type="text" class="form-input" placeholder="请输入员工姓名">
+                        </div>
+                        <div class="form-group">
+                            <label>角色</label>
+                            <select class="form-input">
+                                <option value="beauty">美容顾问</option>
+                                <option value="manager">店长</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>手机号</label>
+                            <input type="tel" class="form-input" placeholder="请输入手机号">
+                        </div>
+                        <div class="form-group">
+                            <label>入职日期</label>
+                            <input type="date" class="form-input">
+                        </div>
+                        <div style="display: flex; gap: 16px;">
+                            <button class="button secondary" style="flex: 1;"
+                                onclick="closeAddEmployeeModal()">取消</button>
+                            <button class="button" style="flex: 1;" onclick="submitAddEmployee()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="navigateTo('home-page')">
+                    <span class="material-icons nav-item-icon">home</span>
+                    <span class="nav-item-label">首页</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('services-page')">
+                    <span class="material-icons nav-item-icon">spa</span>
+                    <span class="nav-item-label">服务</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('detection-page')">
+                    <span class="material-icons nav-item-icon">visibility</span>
+                    <span class="nav-item-label">检测</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('detection-report')">
+                    <span class="material-icons nav-item-icon">description</span>
+                    <span class="nav-item-label">报告</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('profile-page')">
+                    <span class="material-icons nav-item-icon">person</span>
+                    <span class="nav-item-label">我的</span>
+                </div>
+            </div>
+
+            <script>
+                // 页面导航
+                function navigateTo(pageId) {
+                    // 如果未登录且尝试访问需要登录的页面，则跳转到登录页
+                    if (!currentUser && pageId !== 'login-page') {
+                        pageId = 'login-page';
+                    }
+
+                    // 处理"我的"页面的特殊逻辑
+                    if (pageId === 'profile-page') {
+                        // 根据当前角色决定显示哪个"我的"页面
+                        pageId = currentRole === 'manager' ? 'manager-profile-page' : 'profile-page';
+                    }
+
+                    // 隐藏所有页面
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+
+                    // 显示目标页面
+                    document.getElementById(pageId).classList.add('active');
+
+                    // 更新底部导航栏状态
+                    document.querySelectorAll('.nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    // 根据页面ID更新底部导航栏
+                    if (pageId === 'home-page') {
+                        document.querySelectorAll('.nav-item')[0].classList.add('active');
+                    } else if (pageId === 'services-page' || pageId === 'service-detail') {
+                        document.querySelectorAll('.nav-item')[1].classList.add('active');
+                    } else if (pageId === 'detection-page' || pageId === 'detection-customer' ||
+                        pageId === 'detection-questionnaire' || pageId === 'detection-camera' ||
+                        pageId === 'detection-result' || pageId === 'dimension-detail') {
+                        document.querySelectorAll('.nav-item')[2].classList.add('active');
+                    } else if (pageId === 'detection-report') {
+                        document.querySelectorAll('.nav-item')[3].classList.add('active');
+                    } else if (pageId === 'profile-page' || pageId === 'manager-profile-page') {
+                        document.querySelectorAll('.nav-item')[4].classList.add('active');
+                    }
+
+                    // 滚动到顶部
+                    document.querySelector('.content-area').scrollTop = 0;
+                }
+
+                // 开始检测流程
+                function startDetection(type) {
+                    if (type === 'new') {
+                        navigateTo('detection-customer');
+                    } else {
+                        navigateTo('detection-questionnaire');
+                    }
+                }
+
+                // 选择问卷选项
+                function selectOption(element) {
+                    // 移除同级元素的选中状态
+                    const options = element.parentElement.querySelectorAll('.option-item');
+                    options.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+
+                    // 添加选中状态
+                    element.classList.add('selected');
+                }
+
+                // 显示角色切换对话框
+                function showRoleSwitchModal() {
+                    document.getElementById('role-switch-modal').classList.add('active');
+                }
+
+                // 关闭角色切换对话框
+                function closeRoleSwitchModal() {
+                    document.getElementById('role-switch-modal').classList.remove('active');
+                }
+
+                // 切换角色
+                function switchRole(role) {
+                    closeRoleSwitchModal();
+                    // 清空当前登录状态
+                    currentRole = '';
+                    currentUser = null;
+                    // 跳转到登录页面
+                    navigateTo('login-page');
+                }
+
+                // 退出登录
+                function logout() {
+                    // 清空登录状态
+                    currentRole = '';
+                    currentUser = null;
+                    document.getElementById('username').value = 'test';
+                    document.getElementById('password').value = 'test';
+                    // 跳转到登录页面
+                    navigateTo('login-page');
+                }
+
+                // 选择登录角色
+                function selectLoginRole(element, role) {
+                    // 移除其他角色的选中状态
+                    document.querySelectorAll('.role-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    // 添加选中状态
+                    element.classList.add('selected');
+                }
+
+                // 全局变量 - 登录状态
+                let currentRole = ''; // 'beauty' 或 'manager'
+                let currentUser = null; // 当前登录用户信息
+
+                // 登录
+                function login() {
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+
+                    if (username === 'test' && password === 'test') {
+                        // 美容顾问登录
+                        currentRole = 'beauty';
+                        currentUser = {
+                            name: '李美容',
+                            role: '美容顾问',
+                            store: '美睛美科中心店'
+                        };
+                        navigateTo('profile-page');
+                    } else if (username === 'admin' && password === '123') {
+                        // 店长登录
+                        currentRole = 'manager';
+                        currentUser = {
+                            name: '张店长',
+                            role: '店长',
+                            store: '美睛美科中心店'
+                        };
+                        navigateTo('manager-profile-page');
+                    } else {
+                        alert('用户名或密码错误');
+                    }
+                }
+
+                // 筛选检测历史
+                function filterHistory(period) {
+                    alert(`筛选${period}的检测记录`);
+                    // 筛选逻辑
+                }
+
+                // 初始化页面
+                document.addEventListener('DOMContentLoaded', function () {
+                    // 为底部导航栏的"我的"按钮添加特殊处理
+                    const profileNavItem = document.querySelectorAll('.nav-item')[4];
+                    profileNavItem.onclick = function () {
+                        if (!currentUser) {
+                            navigateTo('login-page');
+                        } else {
+                            navigateTo(currentRole === 'manager' ? 'manager-profile-page' : 'profile-page');
+                        }
+                    };
+                });
+
+                // 调整为横屏布局
+                function adjustForLandscape() {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                    @media screen and (min-width: 1200px) {
+                        .app-container {
+                            flex-direction: row;
+                        }
+                        
+                        .content-area {
+                            padding-bottom: var(--spacing);
+                            margin-left: 80px;
+                        }
+                        
+                        .bottom-nav {
+                            position: fixed;
+                            left: 0;
+                            top: 0;
+                            bottom: 0;
+                            width: 80px;
+                            height: 100vh;
+                            flex-direction: column;
+                        }
+                        
+                        .nav-item {
+                            height: auto;
+                            padding: 16px 0;
+                        }
+                        
+                        .service-grid {
+                            grid-template-columns: repeat(4, 1fr);
+                        }
+                        
+                        .case-grid {
+                            grid-template-columns: repeat(3, 1fr);
+                        }
+                        
+                        .customer-grid {
+                            grid-template-columns: repeat(3, 1fr);
+                        }
+                        
+                        .function-grid {
+                            grid-template-columns: repeat(4, 1fr);
+                        }
+                        
+                        .detail-grid {
+                            grid-template-columns: 1fr 2fr;
+                        }
+                        
+                        /* 检测流程页面的横屏优化 */
+                        .detection-flow-container {
+                            display: flex;
+                        }
+                        
+                        .detection-flow-sidebar {
+                            width: 300px;
+                            margin-right: 24px;
+                        }
+                        
+                        .detection-flow-content {
+                            flex: 1;
+                        }
+                        
+                        /* 结果展示页面的横屏优化 */
+                        .result-container {
+                            display: flex;
+                        }
+                        
+                        .result-chart {
+                            width: 50%;
+                            margin-right: 24px;
+                        }
+                        
+                        .result-details {
+                            width: 50%;
+                        }
+                    }
+                `;
+
+                    // 移除旧样式
+                    const oldStyle = document.getElementById('landscape-style');
+                    if (oldStyle) {
+                        oldStyle.remove();
+                    }
+
+                    // 添加新样式
+                    style.id = 'landscape-style';
+                    document.head.appendChild(style);
+                }
+
+                // 问卷相关函数
+                let currentQuestion = 1;
+                const totalQuestions = 9;
+
+                let questionAnswers = new Array(totalQuestions).fill(null); // 存储答案
+
+                function showQuestion(questionNumber) {
+                    // 隐藏所有问题
+                    for (let i = 1; i <= totalQuestions; i++) {
+                        document.getElementById(`question-${i}`).style.display = 'none';
+                    }
+                    // 显示当前问题
+                    document.getElementById(`question-${questionNumber}`).style.display = 'block';
+
+                    // 如果是第一题，禁用"上一题"按钮
+                    const prevButton = document.querySelector('.flow-actions .button.secondary');
+                    if (prevButton) {
+                        prevButton.disabled = questionNumber === 1;
+                    }
+                }
+
+                function selectOption(element) {
+                    // 移除同级元素的选中状态
+                    const options = element.parentElement.querySelectorAll('.option-item');
+                    options.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+
+                    // 添加选中状态
+                    element.classList.add('selected');
+
+                    // 保存答案
+                    questionAnswers[currentQuestion - 1] = element.querySelector('.option-label').textContent;
+
+                    // 延迟一小段时间后自动跳转到下一题
+                    setTimeout(() => {
+                        if (currentQuestion < totalQuestions) {
+                            currentQuestion++;
+                            showQuestion(currentQuestion);
+                        } else {
+                            // 问卷完成，进入下一步
+                            navigateTo('detection-camera');
+                        }
+                    }, 500); // 500ms 延迟，让用户能看到选中效果
+                }
+
+
+                function previousQuestion() {
+                    if (currentQuestion > 1) {
+                        currentQuestion--;
+                        showQuestion(currentQuestion);
+
+                        // 恢复之前的选择（如果有）
+                        const previousAnswer = questionAnswers[currentQuestion - 1];
+                        if (previousAnswer) {
+                            const options = document.querySelectorAll(`#question-${currentQuestion} .option-item`);
+                            options.forEach(option => {
+                                if (option.querySelector('.option-label').textContent === previousAnswer) {
+                                    option.classList.add('selected');
+                                }
+                            });
+                        }
+                    }
+                }
+
+
+                // 性别选择
+                function selectGender(element, gender) {
+                    const items = element.parentElement.querySelectorAll('.radio-item');
+                    items.forEach(item => item.classList.remove('selected'));
+                    element.classList.add('selected');
+                }
+
+                // 用眼时长选择
+                function selectEyeTime(element) {
+                    const items = element.parentElement.querySelectorAll('.radio-item');
+                    items.forEach(item => item.classList.remove('selected'));
+                    element.classList.add('selected');
+                }
+
+                // 多选框切换
+                function toggleCheckbox(element) {
+                    element.classList.toggle('selected');
+                }
+
+                // 开始新客户检测
+                function startNewCustomerDetection() {
+                    // 这里可以添加表单验证逻辑
+                    navigateTo('detection-questionnaire');
+                }
+
+                // 保存客户信息
+                function saveCustomerInfo() {
+                    // 这里可以添加保存信息的逻辑
+                    alert('客户信息已保存');
+                    navigateTo('detection-customer');
+                }
+
+                // 检测记录筛选
+                function filterDetectionHistory(period) {
+                    const filters = document.querySelectorAll('.customer-filter .filter-item');
+                    filters.forEach(filter => filter.classList.remove('active'));
+                    event.target.classList.add('active');
+                    // 这里添加筛选逻辑
+                }
+
+                // 员工管理相关函数
+                function showAddEmployeeModal() {
+                    document.getElementById('add-employee-modal').classList.add('active');
+                }
+
+                function closeAddEmployeeModal() {
+                    document.getElementById('add-employee-modal').classList.remove('active');
+                }
+
+                function submitAddEmployee() {
+                    // 这里添加提交逻辑
+                    closeAddEmployeeModal();
+                    alert('添加员工成功');
+                }
+
+                function editEmployee(id) {
+                    // 这里添加编辑逻辑
+                    alert('编辑员工信息');
+                }
+
+                // 门店管理相关函数
+                function uploadStoreImage() {
+                    // 这里添加上传逻辑
+                    alert('上传门店照片');
+                }
+
+                function deleteStoreImage(id) {
+                    // 这里添加删除逻辑
+                    alert('删除门店照片');
+                }
+
+                function saveStoreInfo() {
+                    // 这里添加保存逻辑
+                    alert('保存门店信息成功');
+                }
+
+                // 头像上传预览
+                document.getElementById('avatar-upload')?.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const avatar = document.querySelector('.profile-avatar');
+                            avatar.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // 分享报告
+                function shareReport() {
+                    alert('报告分享功能即将上线');
+                }
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>
